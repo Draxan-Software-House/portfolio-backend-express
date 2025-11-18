@@ -3,12 +3,12 @@ import bcrypt from "bcryptjs";
 export async function seed(knex) {
   await knex("users").del();
 
-  const hash = await bcrypt.hash("admin123", 10);
+  const hash = await bcrypt.hash("password", 10);
 
   await knex("users").insert([
     {
-      name: "Admin",
-      email: "admin@test.com",
+      name: "Test",
+      email: "test@example.com",
       password: hash
     }
   ]);

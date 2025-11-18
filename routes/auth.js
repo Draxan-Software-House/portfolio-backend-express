@@ -4,6 +4,7 @@ import auth from "../middleware/auth.js";
 import authController from '../controllers/authController.js' ;
 
 dotenv.config();
+
 const router = express.Router();
 
 // Public routes
@@ -20,9 +21,6 @@ router.get("/me", auth.verifyToken, async (req, res) => {
 });
 
 // POST /api/auth/logout
-router.post("/logout", (req, res) => {
-  // client-side token removal; stateless JWT logout
-  res.json({ message: "Logged out (client should discard token)" });
-});
+router.post("/logout", authController.logout);
 
 export default router;
