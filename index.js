@@ -2,6 +2,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import router from "./routes/auth.js";
+import {product, category} from "./routes/apiRoutes.js";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => res.json({ status: "OK", message: "Express API up" }));
 app.use("/api/auth", router);
+app.use('/api/products',product);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
