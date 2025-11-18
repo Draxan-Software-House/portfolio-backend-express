@@ -1,47 +1,54 @@
 // controllers/authController.js
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+
+// Simple in-memory blacklist (can be replaced later with Redis or DB)
+const tokenBlacklist = new Set();
+const resp = (res, code, message) => res.status(code).json({ message });
 
 const authController = {
   async register(req, res) {
     try {
-      const { name, email, password } = req.body;
-
+      const { name, email, password } = req.body || {};
       // validate
       if (!name || !email || !password)
         return res.status(400).json({ message: 'All fields are required.' });
 
-      const existing = await User.findByEmail(email);
-      if (existing) return res.status(409).json({ message: 'Email already exists.' });
+      const existing = await User.query().findOne({email});
+      if (existing) return resp(res,409,'Email already exists.');
+      const hashed = await bcrypt.hash(password, 10);
+      const user = await User.query().insert({ name, email, password: hashed });
 
-      const id = await User.create({ name, email, password });
-      const user = await User.findById(id);
-
-      res.status(201).json({
+      return res.status(201).json({
         message: 'User registered successfully.',
         user,
       });
+
     } catch (error) {
-      res.status(500).json({ message: 'Registration failed.', error: error.message });
+      return res.status(500).json({ message: 'Registration failed.', error: error.message });
     }
   },
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
-
+      const { email, password } = req.body || {};
       if (!email || !password)
         return res.status(400).json({ message: 'Email and password required.' });
 
-      const user = await User.findByEmail(email);
-      if (!user) return res.status(404).json({ message: 'User not found.' });
+      const user = await User.query().findOne({ email });
+      if (!user) return resp(res, 404, 'User not found.');
 
-      const valid = await User.verifyPassword(password, user.password);
-      if (!valid) return res.status(401).json({ message: 'Invalid credentials.' });
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) return resp(res,401,'Invalid credentials.');
 
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      const token = jwt.sign(
+        { id: user.id },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+      );
 
-      res.json({
+      return res.json({
         message: 'Login successful.',
         token,
         user: {
@@ -51,6 +58,7 @@ const authController = {
           email_verified_at: user.email_verified_at,
         },
       });
+
     } catch (error) {
       res.status(500).json({ message: 'Login failed.', error: error.message });
     }
@@ -59,12 +67,12 @@ const authController = {
   async logout(req, res) {
     try {
       const token = req.header('Authorization')?.replace('Bearer ', '');
-      if (!token) return res.status(400).json({ message: 'No token provided.' });
+      if (!token) return resp(res,400,'No token provided.');
 
       // Add token to blacklist
       tokenBlacklist.add(token);
 
-      res.json({ message: 'Logout successful. Token invalidated.' });
+      return res.json({ message: 'Logout successful. Token invalidated.' });
     } catch (error) {
       res.status(500).json({ message: 'Logout failed.', error: error.message });
     }
@@ -77,6 +85,10 @@ const authController = {
     } catch (error) {
       res.status(500).json({ message: 'Failed to fetch profile.', error: error.message });
     }
+  },
+
+  isTokenBlacklisted(token) {
+    return tokenBlacklist.has(token);
   },
 };
 
