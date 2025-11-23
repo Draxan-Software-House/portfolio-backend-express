@@ -1,4 +1,4 @@
-import Product from '../models/Product';
+import Product from '../models/Product.js';
 
 const resp = (res, code, message) => res.status(code).json({ message });
 

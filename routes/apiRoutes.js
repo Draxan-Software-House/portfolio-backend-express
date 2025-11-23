@@ -1,8 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import auth from '../middleware/auth.js';
-import productController from '../controllers/productController';
-import categoryController from '../controllers/categoryController';
+import productController from '../controllers/productController.js';
+import categoryController from '../controllers/categoryController.js';
 
 dotenv.config();
 
