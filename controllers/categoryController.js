@@ -1,4 +1,4 @@
-import Category from '../models/Category';
+import Category from '../models/Category.js';
 
 const resp = (res, code, message) => res.status(code).json({ message });
 
