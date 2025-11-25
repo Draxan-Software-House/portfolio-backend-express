@@ -1,23 +1,36 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import auth from '../middleware/auth.js';
+import rolePermission from '../middleware/rolePermission.js';
+import userController from '../controllers/userController.js';
+import adminController from '../controllers/adminController.js';
 import productController from '../controllers/productController.js';
 import categoryController from '../controllers/categoryController.js';
 
-dotenv.config();
-
 let verif = auth.verifyToken;
 
-//product routes
-export const product = express.Router();
-product.get('/',verif,productController.index);
-product.post('/',verif,productController.store);
-product.patch('/:id',verif,productController.update);
-product.delete('/',verif,productController.destroy);
+const apiRoutes = express.Router();
+apiRoutes.use(auth.verifyToken);
 
-// category routes
-export const category = express.Router();
-category.get('/',verif,categoryController.index);
-category.post('/',verif,categoryController.store);
-category.patch('/:id',verif,categoryController.update);
-category.delete('/',verif,categoryController.destroy);
+//Users Admin only
+apiRoutes.get("/dashboard", 
+  rolePermission(["Admin", "view_dashboard"]), 
+  adminController.index
+);
+
+//Users CRUD admin
+apiRoutes.route('/user')
+.get(
+  userController.index
+)
+.post(
+  userController.store
+);
+apiRoutes.route('/user/:id')
+.put(
+  userController.update
+)
+.delete(
+  userController.destroy
+);
+
+export default apiRoutes;
