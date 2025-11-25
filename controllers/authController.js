@@ -4,7 +4,7 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 
 // Simple in-memory blacklist (can be replaced later with Redis or DB)
-const tokenBlacklist = new Set();
+// const tokenBlacklist = new Set();
 const resp = (res, code, message) => res.status(code).json({ message });
 
 const authController = {
@@ -87,9 +87,9 @@ const authController = {
     }
   },
 
-  isTokenBlacklisted(token) {
-    return tokenBlacklist.has(token);
-  },
+  // isTokenBlacklisted(token) {
+  //   return tokenBlacklist.has(token);
+  // },
 };
 
 export default authController;

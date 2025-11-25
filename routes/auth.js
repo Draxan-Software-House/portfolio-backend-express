@@ -1,9 +1,6 @@
 ﻿import express from "express";
-import dotenv from "dotenv";
 import auth from "../middleware/auth.js";
 import authController from '../controllers/authController.js' ;
-
-dotenv.config();
 
 const router = express.Router();
 
