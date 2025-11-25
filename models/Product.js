@@ -1,4 +1,5 @@
 import { BaseModel } from "./BaseModel.js";
+import Category from "./Category.js";
 
 export default class Product extends BaseModel {
   static get tableName() {
@@ -9,7 +10,7 @@ export default class Product extends BaseModel {
     return {
       category: {
         relation: BaseModel.BelongsToOneRelation,
-        modelClass: "./Category.js",
+        modelClass: Category,
         join: {
           from: "products.category_id",
           to: "categories.id"
