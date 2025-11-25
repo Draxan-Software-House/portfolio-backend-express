@@ -32,5 +32,22 @@ apiRoutes.route('/user/:id')
 .delete(
   userController.destroy
 );
+// Products CRUD
+apiRoutes.route('/product')
+.get(
+  productController.index
+)
+.post(
+  productController.store
+);
+apiRoutes.route('/product/:id')
+.put(
+  productController.update
+)
+.delete(
+  productController.destroy
+);
+
+// Category CRUD
 
 export default apiRoutes;
