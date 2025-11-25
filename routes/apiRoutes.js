@@ -2,13 +2,14 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import rolePermission from '../middleware/rolePermission.js';
 import userController from '../controllers/userController.js';
+import adminController from '../controllers/adminController.js';
 import productController from '../controllers/productController.js';
 import categoryController from '../controllers/categoryController.js';
 
 let verif = auth.verifyToken;
 
 const apiRoutes = express.Router();
-apiRoutes.use(auth);
+apiRoutes.use(auth.verifyToken);
 
 //Users Admin only
 apiRoutes.get("/dashboard", 
@@ -17,20 +18,18 @@ apiRoutes.get("/dashboard",
 );
 
 //Users CRUD admin
-apiRoutes.get("/user", 
-  rolePermission(["Admin", "manage_user"]),
+apiRoutes.route('/user')
+.get(
   userController.index
-);
-apiRoutes.post("/user", 
-  rolePermission(["Admin", "manage_user"]),
+)
+.post(
   userController.store
 );
-apiRoutes.put("/user/:id", 
-  rolePermission(["Admin", "manage_user"]),
+apiRoutes.route('/user/:id')
+.put(
   userController.update
-);
-apiRoutes.delete("/user/:id", 
-  rolePermission(["Admin", "manage_user"]),
+)
+.delete(
   userController.destroy
 );
 

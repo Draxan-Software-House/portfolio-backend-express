@@ -1,4 +1,6 @@
 import { BaseModel } from "./BaseModel.js";
+import Permission from "./Permission.js";
+import Role from "./Role.js";
 
 export default class User extends BaseModel {
   static get tableName() {
@@ -25,7 +27,7 @@ export default class User extends BaseModel {
       roles:
       {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: "./Role.js",
+        modelClass: Role,
         join: {
           from: "user_role.user_id",
           to: "user_role.role_id"
@@ -34,7 +36,7 @@ export default class User extends BaseModel {
       },
       permissions: {
         relation: BaseModel.ManyToManyRelation,
-        modelClass: "./Permission.js",
+        modelClass: Permission,
         join: {
           from: "users.id",
           through: {

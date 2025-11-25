@@ -1,6 +1,6 @@
 import RBACService from '../services/RBACService.js';
 
-rolePermission = (requiredRole) => {
+function rolePermission(requiredRole){
   return async (req,res,next) => {
     try {
       const user = req.user;

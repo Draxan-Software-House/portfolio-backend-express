@@ -1,7 +1,8 @@
+import User from '../../models/User.js';
 export async function seed(knex) {
-  await knex("role_permissions").del();
-  await knex("user_roles").del();
-  await knex("user_permissions").del();
+  await knex("role_permission").del();
+  await knex("user_role").del();
+  await knex("user_permission").del();
   await knex("roles").del();
   await knex("permissions").del();
 
@@ -52,7 +53,7 @@ export async function seed(knex) {
     insertedPermissions.map((p) => [p.name, p.id])
   );
 
-  // 3. Assign permissions to Admin
+  // 3. Assign permissions to Admin role
   const adminRolePermissions = 
   [
     { role_id: admin.id, permission_id: permMap["view_products"] },
@@ -76,26 +77,32 @@ export async function seed(knex) {
   //   permission_id: p.id
   // }));
 
-  // 5. User role-permissions
-  superUser = User.query().findOne('test@example.com');
-  adminUser = User.query().findOne('admin@asd.com');
-  const userRolePermissions = [
-    { role_id: user.id, permission_id: permMap["view_dashboard"] },
-    { role_id: user.id, permission_id: permMap["view_dashboard"] },
-  ];
+  // 5. User permissions bind
+  const superUser = await User.query().findOne('email','test@example.com');
+  const adminUser = await User.query().findOne('email','admin@asd.com');
   
   await knex("user_role").insert([
-    {user_id: superUser.id, role_id: super.id},
+    {user_id: superUser.id, role_id: superAdmin.id},
     {user_id: adminUser.id, role_id: admin.id},
-
+    
   ]);
+  
+  const rolePermissions = [
+    { role_id: superAdmin.id, permission_id: permMap["view_dashboard"] },
+    { role_id: admin.id, permission_id: permMap["view_dashboard"] },
+  ];
 
-  await knex("user_permission").insert();
+  const userPermissions = [
+    { user_id: superUser.id, permission_id: permMap["view_dashboard"] },
+    { user_id: adminUser.id, permission_id: permMap["view_dashboard"] },
+  ];
+
+  await knex("user_permission").insert(userPermissions);
 
    // 6. Insert all role permissions
    await knex("role_permission").insert([
     ...adminRolePermissions,
-    ...userRolePermissions
+    ...rolePermissions,
   ]);
   
 }
