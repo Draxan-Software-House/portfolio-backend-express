@@ -6,6 +6,18 @@ export default class Permission extends BaseModel {
     return "permissions";
   }
 
+  static get jsonSchema(){
+    return {
+      type: "object",
+      required: ["name"],
+
+      properties: {
+        id: {type: "integer"},
+        name: { type: "string", minLength: 3, maxLength: 100 }
+      }
+    }
+  }
+
   static get relationMappings(){
     return {
       roles:

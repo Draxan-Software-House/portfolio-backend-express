@@ -6,6 +6,17 @@ export default class Tag extends BaseModel {
     return "tags";
   }
 
+  static get jsonSchema(){
+    return {
+      type:"object",
+      required: ["name"],
+      properties: {
+        id: {type: 'integer' },
+        name: { type: "string", minLength: 3, maxLength: 100 }
+      }
+    }
+  }
+
   static get relationMappings() {
     return {
       projects: {

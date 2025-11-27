@@ -7,6 +7,18 @@ export default class Role extends BaseModel {
     return "roles";
   }
 
+  static get jsonSchema(){
+    return {
+      type: "object",
+      required: ["name"],
+
+      properties: {
+        id: {type: "integer"},
+        name: { type: "string", minLength: 3, maxLength: 100 }
+      }
+    }
+  }
+
   static get relationMappings(){
     return {
       permissions:{

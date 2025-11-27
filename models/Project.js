@@ -6,6 +6,19 @@ export default class Project extends BaseModel {
     return "projects";
   }
 
+  static get jsonSchema() {
+    return {
+      type: "object",
+      required: ["title"],
+
+      properties: {
+        id: { type: "integer" },
+        title: { type: "string", minLength: 3, maxLength: 100 },
+        description: { type: ["string", "null"] }
+      }
+    };
+  }
+
   static get relationMappings() {
     return {
       tags: {

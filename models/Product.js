@@ -6,6 +6,21 @@ export default class Product extends BaseModel {
     return "products";
   }
 
+  static get jsonSchema() {
+    return {
+      type: "object",
+      required: ["name", "price", "stock", "category_id"],
+
+      properties: {
+        id: { type: "integer" },
+        name: { type: "string", minLength: 3, maxLength: 100 },
+        price: { type: "integer" },
+        stock: { type: "integer" },
+        category_id: { type: "integer" }
+      }
+    };
+  }
+
   static get relationMappings() {
     return {
       category: {

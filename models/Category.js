@@ -6,6 +6,18 @@ export default class Category extends BaseModel {
     return "categories";
   }
 
+  static get jsonSchema(){
+    return {
+      type: "object",
+      required: ["name"],
+
+      properties: {
+        id: { type: "integer" },
+        name: { type: "string", minLength: 3, maxLength: 50 },
+      }
+    }
+  }
+
   static get relationMappings() {
     return {
       products: {
