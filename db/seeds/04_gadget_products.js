@@ -1,4 +1,6 @@
-﻿import {fakerEN, Faker} from '@faker-js/faker';
+﻿import {fakerEN} from '@faker-js/faker';
+import Category from '../../models/Category.js';
+import {randomize} from '../../helpers/file.js';
 
 const gadgetRand = [
   "NeuroLink Pro",  "AeroSync Mini", "VoltEdge X2", "LumaPod Air",
@@ -25,22 +27,24 @@ const gadgetRand = [
 ];
 
 // Helper: random item from list
-const randItem = arr => arr[Math.floor(Math.random() * arr.length)];
-
 export async function seed(knex) {
   await knex("products").del();
   fakerEN.seed(30);
-
+  const categories = await Category.query();
+  if (categories.length === 0) {
+    throw new Error("No categories found. Seed categories first.");
+  }
   const products = [];
-
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 30; i++) {
+    const index = randomize(categories.length);
+    const cat = categories[index];
     products.push({
-      name: gadgetRand[Math.floor(Math.random() * gadgetRand.length)],
-      price: fakerEN.number.int({ min: 10000, max: 500000 }),
+      name: gadgetRand[randomize(gadgetRand.length)],
+      price: fakerEN.number.int({ min: 10000, max: 999999 }),
       description: fakerEN.lorem.sentence(5),
-      stock: fakerEN.number.int({ min: 1, max: 100 })
+      stock: fakerEN.number.int({ min: 1, max: 100 }),
+      category_id: cat.id
     });
   }
-
   await knex("products").insert(products);
 }

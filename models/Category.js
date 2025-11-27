@@ -1,4 +1,5 @@
 import { BaseModel } from "./BaseModel.js";
+import Product from "./Product.js";
 
 export default class Category extends BaseModel {
   static get tableName() {
@@ -9,7 +10,7 @@ export default class Category extends BaseModel {
     return {
       products: {
         relation: BaseModel.HasManyRelation,
-        modelClass: "./Product.js",
+        modelClass: Product,
         join: {
           from: "categories.id",
           to: "products.category_id"

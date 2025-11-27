@@ -1,9 +1,5 @@
 ﻿import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import User from '../models/User.js';
-import authController from '../controllers/authController.js';
-
-dotenv.config();
 
 const auth = {
   async verifyToken(req, res, next) {
@@ -19,12 +15,12 @@ const auth = {
          message: "Missing token or wrong method"
         });
       // Check blacklist
-      if (authController.isTokenBlacklisted(token)) {
-        return res.status(401).json({
-          status: 401,
-          message: 'Token has been invalidated.',
-        });
-      }
+      // if (authController.isTokenBlacklisted(token)) {
+      //   return res.status(401).json({
+      //     status: 401,
+      //     message: 'Token has been invalidated.',
+      //   });
+      // }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       // Load user (Objection.js)

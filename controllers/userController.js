@@ -1,21 +1,19 @@
-import Product from '../models/Product.js';
+import User from '../models/User.js';
 
 const resp = (res, code, message) => res.status(code).json({ message });
 
-const productController = {
+const userController = {
   async index(req, res) {
     try {
-      const page = req.query.page || 0;
-      const prod = await Product.query().page(page,10);
+      const user = await User.query().select(['name','email']);
       const rs = {
-        status:201,
-        message: "Products retrieved successfully"
-      }
+        status: 201,
+        data : user
+      };
       return resp(res,201,rs);
     } catch (error) {
       const rs = {
         status: 500,
-        message: "Error occured",
         error: error.message
       }
       return resp(res,500,rs);
@@ -44,4 +42,4 @@ const productController = {
   },
 }
 
-export default productController;
+export default userController;
